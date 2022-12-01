@@ -2,13 +2,12 @@ namespace AdventOfCode.Day1;
 
 public class Part2
 {
-
-    static string input = File.ReadAllText("Day1/input.txt");
-    static string[] elvesCalories = input.Split("\n\n");
+    private static readonly string Input = File.ReadAllText("Day1/input.txt");
+    private static readonly string[] ElvesCalories = Input.Split("\n\n");
 
     public int solve()
     {
-        return elvesCalories
+        return ElvesCalories
             .Select(x => x.Split("\n"))
             .Select(x => x.Sum(int.Parse))
             .OrderBy(x => x)
