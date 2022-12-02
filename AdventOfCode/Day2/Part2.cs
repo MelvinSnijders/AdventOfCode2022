@@ -15,9 +15,9 @@ public class Part2
         
         List<Shape> shapes = new List<Shape>();
 
-        Shape rock = new Shape(new[] { 'A', 'X' }, 1);
-        Shape paper = new Shape(new[] { 'B', 'Y' }, 2);
-        Shape scissors = new Shape(new[] { 'C', 'Z' }, 3);
+        Shape rock = new Shape(new[] { 'A' }, 1);
+        Shape paper = new Shape(new[] { 'B', }, 2);
+        Shape scissors = new Shape(new[] { 'C' }, 3);
         
         rock.Beats = scissors;
         paper.Beats = rock;
