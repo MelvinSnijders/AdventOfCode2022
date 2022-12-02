@@ -12,55 +12,34 @@ public class Part1
 
     public int Solve()
     {
-        int totalPoints = 0;
-        foreach (string game in _games)
+        
+        List<Shape> shapes = new List<Shape>();
+
+        Shape rock = new Shape(new[] { 'A', 'X' }, 1);
+        Shape paper = new Shape(new[] { 'B', 'Y' }, 2);
+        Shape scissors = new Shape(new[] { 'C', 'Z' }, 3);
+        
+        rock.Beats = scissors;
+        paper.Beats = rock;
+        scissors.Beats = paper;
+        
+        shapes.Add(rock);
+        shapes.Add(paper);
+        shapes.Add(scissors);
+
+        return _games.Select(game =>
         {
             string[] strategy = game.Split(" ");
-            Strategy opponent = LetterToStrategy(strategy[0]);
-            Strategy player = LetterToStrategy(strategy[1]);
+            Shape player1 = shapes.FirstOrDefault(s => s.Letters.ToList().Contains(char.Parse(strategy[0]))) ??
+                            throw new FormatException("Invalid shape letter");
+            Shape player2 = shapes.FirstOrDefault(s => s.Letters.ToList().Contains(char.Parse(strategy[1]))) ??
+                            throw new FormatException("Invalid shape letter");
 
-            Console.WriteLine(opponent + " v " + player);
-            
-            totalPoints += (int) player;
-            totalPoints += DeterminePoints(player, opponent);
-        }
+            if (player1 == player2) return player2.Points + 3; // Draw
+            if (player2.Beats == player1) return player2.Points + 6; // Win
+            return player2.Points; // Lose
 
-        return totalPoints;
-    }
-
-    private Strategy LetterToStrategy(string letter)
-    {
-        switch (letter)
-        {
-            case "A":
-            case "X":
-                return Strategy.Rock;
-            case "B":
-            case "Y":
-                return Strategy.Paper;
-            case "C":
-            case "Z":
-                return Strategy.Scissors;
-            default:
-                return Strategy.Rock;
-        }
-    }
-
-    private int DeterminePoints(Strategy player, Strategy opponent)
-    {
-        if (player == opponent)
-        {
-            return 3;
-        }
-
-        switch (player)
-        {
-            case Strategy.Rock when opponent == Strategy.Scissors:
-            case Strategy.Paper when opponent == Strategy.Rock:
-            case Strategy.Scissors when opponent == Strategy.Paper:
-                return 6;
-            default:
-                return 0;
-        }
+        }).Sum();
+        
     }
 }
