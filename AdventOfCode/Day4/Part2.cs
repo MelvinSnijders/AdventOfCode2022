@@ -13,9 +13,7 @@ public class Part2
     public int Solve()
     {
 
-        int overlapCount = 0;
-        
-        foreach (string assignmentPair in _assignmentPairs)
+        return _assignmentPairs.Where(assignmentPair =>
         {
             string[] pairs = assignmentPair.Split(",");
 
@@ -25,19 +23,14 @@ public class Part2
             string[] sections1 = sectionsAssigned1.Split('-');
             int from1 = int.Parse(sections1[0]);
             int to1 = int.Parse(sections1[1]);
-            
+
             string[] sections2 = sectionsAssigned2.Split('-');
             int from2 = int.Parse(sections2[0]);
             int to2 = int.Parse(sections2[1]);
+
+            return from1 <= to2 && from2 <= to1;
             
-            if (from1 <= to2 && from2 <= to1)
-            {
-                overlapCount++;
-            }
-
-        }
-
-        return overlapCount;
+        }).Count();
 
     }
 }
