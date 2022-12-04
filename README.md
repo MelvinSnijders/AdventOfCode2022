@@ -1,3 +1,6 @@
+# Advent of Code 2022
+My results for the [Advent of Code 2022](https://adventofcode.com/2022) challenges.
+
 <!--- advent_readme_stars table --->
 ## 2022 Results
 
