@@ -1,5 +1,8 @@
+using System.ComponentModel;
+
 namespace AdventOfCode.Day4;
 
+[Description("Day 4: Camp Cleanup")]
 public class Part1
 {
     private readonly string[] _assignmentPairs;
@@ -12,7 +15,7 @@ public class Part1
 
     public int Solve()
     {
-
+        
         return _assignmentPairs.Where(assignmentPair =>
         {
             string[] pairs = assignmentPair.Split(",");
@@ -32,7 +35,7 @@ public class Part1
             {
                 return true;
             }
-
+        
             return from2 <= from1 && to2 >= to1;
         }).Count();
 
