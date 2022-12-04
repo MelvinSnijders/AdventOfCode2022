@@ -18,3 +18,4 @@ Console.WriteLine($"Day 3, Part 2: {new Day3Part2().Solve()}");
 
 Console.WriteLine($"Day 4, Part 1: {new Day4Part1().Solve()}");
 Console.WriteLine($"Day 4, Part 2: {new Day4Part2().Solve()}");
+

@@ -1,3 +1,5 @@
+![](https://cs.fs.uni-saarland.de/wp-content/uploads/2022/11/AoC.jpg)
+
 # Advent of Code 2022
 My results for the [Advent of Code 2022](https://adventofcode.com/2022) challenges.
 

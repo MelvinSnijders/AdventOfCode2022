@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace AdventOfCode.Day4;
 
-[Description("Day 4: Camp Cleanup")]
+[Description("In how many assignment pairs does one range fully contain the other?")]
 public class Part1
 {
     private readonly string[] _assignmentPairs;
@@ -12,6 +12,7 @@ public class Part1
         string input = File.ReadAllText("Day4/input.txt");
         _assignmentPairs = input.Split("\n");
     }
+
 
     public int Solve()
     {

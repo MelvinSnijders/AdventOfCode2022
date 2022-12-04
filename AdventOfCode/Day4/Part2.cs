@@ -1,5 +1,8 @@
+using System.ComponentModel;
+
 namespace AdventOfCode.Day4;
 
+[Description("In how many assignment pairs do the ranges overlap?")]
 public class Part2
 {
     private readonly string[] _assignmentPairs;
@@ -10,6 +13,7 @@ public class Part2
         _assignmentPairs = input.Split("\n");
     }
 
+    
     public int Solve()
     {
 
