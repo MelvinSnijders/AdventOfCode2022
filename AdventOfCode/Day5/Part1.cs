@@ -26,18 +26,17 @@ public class Part1
         stacks[6] = new Stack<char>(new[] { 'W', 'C', 'F' });
         stacks[7] = new Stack<char>(new[] { 'Q', 'H', 'G', 'Z', 'W', 'V', 'P', 'M' });
         stacks[8] = new Stack<char>(new[] { 'G', 'Z', 'D', 'L', 'C', 'N', 'R' });
-
-        string[] delimiter = { "move ", " from ", " to " };
-
+        
          _moves.Select(
-                move => move.Split(delimiter, StringSplitOptions.RemoveEmptyEntries)
+                move => move.Split(new []{ "move ", " from ", " to " }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse)
                 .ToArray()
             ).ToList().ForEach(move => 
              Enumerable.Range(0, move[0])
                  .ToList()
                  .ForEach(i => stacks[move[2] - 1].Push(
-                     stacks[move[1] - 1].Pop())
+                     stacks[move[1] - 1].Pop()
+                     )
                  )
              );
 

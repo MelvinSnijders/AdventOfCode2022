@@ -27,33 +27,27 @@ public class Part2
         stacks[7] = new Stack<char>(new[] { 'Q', 'H', 'G', 'Z', 'W', 'V', 'P', 'M' });
         stacks[8] = new Stack<char>(new[] { 'G', 'Z', 'D', 'L', 'C', 'N', 'R' });
 
-        // Loop through the moves     
-        foreach (string move in _moves)
-        {
-            string[] delimiter = { "move ", " from ", " to " };
-            int[] moveNumbers = move.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)
-                .ToArray();
-
-            List<char> popped = new List<char>();
-            for (int i = 0; i < moveNumbers[0]; i++)
+        _moves.Select(
+            move => move.Split(new []{ "move ", " from ", " to " }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToArray()
+        ).ToList().ForEach(move =>
             {
-                char toMove = stacks[moveNumbers[1] - 1].Pop();
-                popped.Add(toMove);
-                
+                List<char> popped = new List<char>();
+                Enumerable.Range(0, move[0])
+                    .ToList()
+                    .ForEach(i =>
+                        {
+
+                            char toMove = stacks[move[1] - 1].Pop();
+                            popped.Add(toMove);
+                        }
+                    );
+                popped.Reverse();
+                popped.ForEach(stacks[move[2] - 1].Push);
             }
+        );
 
-            popped.Reverse();
-            popped.ForEach(stacks[moveNumbers[2] - 1].Push);
-
-        }
-
-        // Get top of all stacks
-        StringBuilder stringBuilder = new StringBuilder();
-        foreach (Stack<char> stack in stacks)
-        {
-            stringBuilder.Append(stack.Peek());
-        }
-
-        return stringBuilder.ToString();
+        return new string(stacks.Select(stack => stack.Peek()).ToArray());
     }
 }
