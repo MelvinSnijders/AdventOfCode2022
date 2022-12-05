@@ -34,8 +34,6 @@ public class Part2
             int[] moveNumbers = move.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)
                 .ToArray();
 
-            Console.WriteLine($"Move {moveNumbers[0]} from {moveNumbers[1]} to {moveNumbers[2]}");
-
             List<char> popped = new List<char>();
             for (int i = 0; i < moveNumbers[0]; i++)
             {
