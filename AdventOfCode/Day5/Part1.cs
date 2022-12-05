@@ -27,27 +27,21 @@ public class Part1
         stacks[7] = new Stack<char>(new[] { 'Q', 'H', 'G', 'Z', 'W', 'V', 'P', 'M' });
         stacks[8] = new Stack<char>(new[] { 'G', 'Z', 'D', 'L', 'C', 'N', 'R' });
 
-        // Loop through the moves     
-        foreach (string move in _moves)
-        {
-            string[] delimiter = { "move ", " from ", " to " };
-            int[] moveNumbers = move.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)
-                .ToArray();
+        string[] delimiter = { "move ", " from ", " to " };
 
-            for (int i = 0; i < moveNumbers[0]; i++)
-            {
-                char toMove = stacks[moveNumbers[1] - 1].Pop();
-                stacks[moveNumbers[2] - 1].Push(toMove);
-            }
-        }
+         _moves.Select(
+                move => move.Split(delimiter, StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToArray()
+            ).ToList().ForEach(move => 
+             Enumerable.Range(0, move[0])
+                 .ToList()
+                 .ForEach(i => stacks[move[2] - 1].Push(
+                     stacks[move[1] - 1].Pop())
+                 )
+             );
 
-        // Get top of all stacks
-        StringBuilder stringBuilder = new StringBuilder();
-        foreach (Stack<char> stack in stacks)
-        {
-            stringBuilder.Append(stack.Peek());
-        }
-
-        return stringBuilder.ToString();
+         return new string(stacks.Select(stack => stack.Peek()).ToArray());
+  
     }
 }
