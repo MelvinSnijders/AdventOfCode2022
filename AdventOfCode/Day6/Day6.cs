@@ -22,7 +22,7 @@ public class Day6
 
     private int Solve(int packetSize)
     {
-        
+
         int count = 0;
         string possibleStart = "";
         while (possibleStart.Distinct().Count() != packetSize)
