@@ -1,4 +1,4 @@
-namespace AdventOfCode.Day7;
+namespace AdventOfCode.Days._07;
 
 public class Folder : Item
 {

@@ -1,25 +1,28 @@
-namespace AdventOfCode.Day6;
+using AoCHelper;
 
-public class Day6
+namespace AdventOfCode.Days._06;
+
+public sealed class Day6 : BaseDay
 {
     
     private readonly string _input;
     
     public Day6()
     {
-        _input = File.ReadAllText("Day6/input.txt");
+        _input = File.ReadAllText(InputFilePath);
     }
 
-    public int Part1()
+    public override ValueTask<string> Solve_1()
     {
-        return Solve(4);
+        int solution = Solve(4);
+        return new ValueTask<string>(solution.ToString());
     }
 
-    public int Part2()
+    public override ValueTask<string> Solve_2()
     {
-        return Solve(14);
+        int solution = Solve(14);
+        return new ValueTask<string>(solution.ToString());
     }
-
     private int Solve(int packetSize)
     {
 
@@ -34,4 +37,5 @@ public class Day6
         return count + (packetSize - 1);
         
     }
+    
 }
