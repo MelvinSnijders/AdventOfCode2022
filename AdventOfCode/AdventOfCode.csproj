@@ -14,10 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Days" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="AoCHelper" Version="2.0.0" />
     </ItemGroup>
 
