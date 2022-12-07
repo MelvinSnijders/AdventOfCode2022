@@ -32,7 +32,7 @@ public sealed class Day5 : BaseDay
                     .ForEach(i =>
                     {
                         if (stacks.Count <= i) stacks.Add(new Stack<char>());
-                        if (!String.IsNullOrEmpty(strings[i])) stacks[i].Push(strings[i][0]);
+                        if (!string.IsNullOrEmpty(strings[i])) stacks[i].Push(strings[i][0]);
                     })
             );
 
@@ -71,7 +71,7 @@ public sealed class Day5 : BaseDay
                     .ForEach(i =>
                     {
                         if (stacks.Count <= i) stacks.Add(new Stack<char>());
-                        if (!String.IsNullOrEmpty(strings[i])) stacks[i].Push(strings[i][0]);
+                        if (!string.IsNullOrEmpty(strings[i])) stacks[i].Push(strings[i][0]);
                     })
             );
 
@@ -81,7 +81,7 @@ public sealed class Day5 : BaseDay
                 .ToArray()
         ).ToList().ForEach(move =>
             {
-                List<char> popped = new List<char>();
+                List<char> popped = new();
                 Enumerable.Range(0, move[0])
                     .ToList()
                     .ForEach(_ => popped.Add(stacks[move[1] - 1].Pop()));

@@ -15,7 +15,7 @@ public sealed class Day7 : BaseDay
 
     public override ValueTask<string> Solve_1()
     {
-        List<Folder> allowedDirs = CheckSize(_rootFolder);
+        IEnumerable<Folder> allowedDirs = CheckSize(_rootFolder);
         int solution = allowedDirs.Select(dir => dir.GetSize()).Sum();
         return new ValueTask<string>(solution.ToString());
     }
@@ -41,9 +41,12 @@ public sealed class Day7 : BaseDay
             {
                 string dir = line.Split(" ")[2];
 
-                if (dir.Equals("..")) currentDir = currentDir.Parent ?? currentDir;
-                else if (dir.Equals("/")) currentDir = rootNode;
-                else currentDir = currentDir.SearchItem(dir) as Folder ?? currentDir;
+                currentDir = dir switch
+                {
+                    ".." => currentDir.Parent ?? currentDir,
+                    "/" => rootNode,
+                    _ => currentDir.SearchItem(dir) as Folder ?? currentDir
+                };
             }
             else if (!line.StartsWith("$"))
             {
@@ -58,7 +61,7 @@ public sealed class Day7 : BaseDay
         return rootNode;
     }
 
-    private List<Folder> CheckSize(Folder fileObject)
+    private IEnumerable<Folder> CheckSize(Folder fileObject)
     {
         List<Folder> allowed = new();
 
@@ -73,9 +76,9 @@ public sealed class Day7 : BaseDay
         return allowed;
     }
 
-    private List<int> FindSizes(Folder node)
+    private IEnumerable<int> FindSizes(Folder node)
     {
-        List<int> sizes = new List<int> { node.GetSize() };
+        List<int> sizes = new() { node.GetSize() };
 
         node.Items
             .OfType<Folder>()
