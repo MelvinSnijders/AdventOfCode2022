@@ -3,49 +3,39 @@ namespace AdventOfCode.Day7;
 public class Day7
 {
 
-    private readonly FileObject _rootNode;
+    private readonly Folder _rootFolder;
 
     public Day7()
     {
-        string input = File.ReadAllText("Day7/input.txt");
+        string input = System.IO.File.ReadAllText("Day7/input.txt");
         string[] lines = input.Split("\n");
-        _rootNode = ParseCommands(lines);
+        _rootFolder = ParseCommands(lines);
     }
 
-    private FileObject ParseCommands(string[] lines)
+    private Folder ParseCommands(string[] lines)
     {
-        FileObject rootNode = new FileObject(0, "/", null, true);
-        FileObject currentDir = rootNode;
-
-        // Convert commands into a tree structure
+        Folder rootNode = new Folder("/");
+        Folder currentDir = rootNode;
+        
         foreach (string line in lines)
         {
 
             if (line.StartsWith("$ cd"))
             {
-                // Move to the specified directory
                 string dir = line.Split(" ")[2];
+                
+                if (dir.Equals("..")) currentDir = currentDir.Parent ?? currentDir ;
+                else if(dir.Equals("/"))  currentDir = rootNode;
+                else currentDir = currentDir.SearchItem(dir) as Folder ?? currentDir;
 
-                if (dir.Equals(".."))
-                {
-                    currentDir = currentDir.Parent ?? currentDir;
-                }
-                else
-                {
-                    currentDir = currentDir.GetDirectory(dir);
-                }
-            } else {
+            } else if(!line.StartsWith("$")) {
+                
                 string[] splittedLine = line.Split(" ");
-                if (line.StartsWith("dir"))
-                {
-                    currentDir.CreateDirectory(line.Split(" ")[1]);
-                }
-                else
-                {
-                    int fileSize = int.Parse(splittedLine[0]);
-                    string fileName = splittedLine[1];
-                    currentDir.CreateFile(fileSize, fileName);
-                }
+                Item toAdd;
+                if (line.StartsWith("dir")) toAdd = new Folder(splittedLine[1]);
+                else toAdd = new File(splittedLine[1], int.Parse(splittedLine[0]));
+                currentDir.AddItem(toAdd);
+                
             }
 
         }
@@ -56,20 +46,20 @@ public class Day7
     
     public int SolvePart1()
     {
-        List<FileObject> allowedDirs = CheckSize(_rootNode);
-        return allowedDirs.Select(dir => dir.Size).Sum();;
+        List<Folder> allowedDirs = CheckSize(_rootFolder);
+        return allowedDirs.Select(dir => dir.GetSize()).Sum();;
     }
-
-    // WARNING: Recursive function ahead!
-    private List<FileObject> CheckSize(FileObject fileObject)
+    
+    private List<Folder> CheckSize(Folder fileObject)
     {
 
-        List<FileObject> allowed = new List<FileObject>();
+        List<Folder> allowed = new List<Folder>();
         
-        if (fileObject is { Size: <= 100_000, IsDirectory: true }) allowed.Add(fileObject);
+        if (fileObject.GetSize() <= 100_000) allowed.Add(fileObject);
 
-        fileObject.Children
-            .Where(child => child.Children.Count > 0)
+        fileObject.Items
+            .OfType<Folder>()
+            .Where(child => child.Items.Count > 0)
             .ToList()
             .ForEach(child => allowed.AddRange(CheckSize(child)));
 
@@ -79,70 +69,26 @@ public class Day7
 
     public int SolvePart2()
     {
-        int usedSpace = _rootNode.Size;
+        int usedSpace = _rootFolder.GetSize();
         int freeSpace = 70000000 - usedSpace;
         int deletionNeeded = 30000000 - freeSpace;
         
-        return FindSizes(_rootNode).Where(size => size >= deletionNeeded).Min();
+        return FindSizes(_rootFolder).Where(size => size >= deletionNeeded).Min();
 
     }
 
-    private List<int> FindSizes(FileObject node)
+    private List<int> FindSizes(Folder node)
     {
         
-        List<int> sizes = new List<int> { node.Size };
+        List<int> sizes = new List<int> { node.GetSize() };
 
-        node.Children
-            .Where(child => child.Children.Count > 0)
+        node.Items
+            .OfType<Folder>()
+            .Where(child => child.Items.Count > 0)
             .ToList()
             .ForEach(child => sizes.AddRange(FindSizes(child)));
 
         return sizes;
     }
 
-    internal class FileObject
-    {
-     
-        public int Size { get; private set; }
-        public string Name { get; }
-        public List<FileObject> Children { get; }
-        public FileObject? Parent { get; }
-        
-        public bool IsDirectory { get; }
-
-        public FileObject(int size, string name, FileObject? parent, bool isDirectory)
-        {
-            Size = size;
-            Name = name;
-            Children = new List<FileObject>();
-            Parent = parent;
-            IsDirectory = isDirectory;
-        }
-
-        public FileObject GetDirectory(string name)
-        {
-            return Children.Find(fileObject => fileObject.Name.Equals(name)) ?? this;
-        }
-
-        public void CreateDirectory(string name)
-        {
-            FileObject fileObject = new FileObject(0, name, this, true);
-            Children.Add(fileObject);
-        }
-
-        public void CreateFile(int size, string name)
-        {
-            FileObject fileObject = new FileObject(size, name, this, false);
-            Children.Add(fileObject);
-            IncreaseSize(size);
-        }
-
-        private void IncreaseSize(int size)
-        {
-            Size += size;
-            Parent?.IncreaseSize(size);
-        }
-        
-    }
-    
 }
