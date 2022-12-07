@@ -43,10 +43,10 @@ public sealed class Day7 : BaseDay
 
                 currentDir = dir switch
                 {
-                    ".." => currentDir.Parent ?? currentDir,
+                    ".." => currentDir.Parent,
                     "/" => rootNode,
-                    _ => currentDir.SearchItem(dir) as Folder ?? currentDir
-                };
+                    _ => currentDir.SearchItem(dir) as Folder
+                } ?? currentDir;
             }
             else if (!line.StartsWith("$"))
             {
