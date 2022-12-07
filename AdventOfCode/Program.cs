@@ -1,4 +1,5 @@
 using AdventOfCode.Day6;
+using AdventOfCode.Day7;
 using Day1Part1 = AdventOfCode.Day1.Part1;
 using Day1Part2 = AdventOfCode.Day1.Part2;
 using Day2Part1 = AdventOfCode.Day2.Part1;
@@ -27,3 +28,6 @@ Console.WriteLine($"Day 5, Part 2: {new Day5Part2().Solve()}");
 
 Console.WriteLine($"Day 6, Part 1: {new Day6().Part1()}");
 Console.WriteLine($"Day 6, Part 2: {new Day6().Part2()}");
+
+Console.WriteLine($"Day 7, Part 1: {new Day7().SolvePart1()}");
+Console.WriteLine($"Day 7, Part 2: {new Day7().SolvePart2()}");
