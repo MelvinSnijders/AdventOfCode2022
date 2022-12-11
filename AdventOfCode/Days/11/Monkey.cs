@@ -1,5 +1,3 @@
-using System.Data;
-
 namespace AdventOfCode.Days._11;
 
 public class Monkey

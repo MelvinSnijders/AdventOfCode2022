@@ -1,3 +1,4 @@
+using AdventOfCode.Days._11;
 using AoCHelper;
 
-Solver.SolveAll();
+Solver.Solve<Day11>();

@@ -1,4 +1,3 @@
-using System.Numerics;
 using AoCHelper;
 
 namespace AdventOfCode.Days._11;
@@ -36,57 +35,50 @@ public sealed class Day11 : BaseDay
 
     public override ValueTask<string> Solve_1()
     {
-        int rounds = 20;
+        Dictionary<int, long> monkeyValues = Play(_monkeysPart1, 20, input => input / 3);
+        return new ValueTask<string>(CalculateBusiness(monkeyValues).ToString());
+    }
 
+    public override ValueTask<string> Solve_2()
+    {
+        int factor = _monkeysPart2.Aggregate(1, (c, m) => c * m.Value.TestDivisor);
+        Dictionary<int, long> monkeyValues = Play(_monkeysPart2, 10000, input => input % factor);
+        return new ValueTask<string>(CalculateBusiness(monkeyValues).ToString());
+    }
+
+    private long CalculateBusiness(Dictionary<int, long> monkeyValues)
+    {
+        return monkeyValues.OrderByDescending(pair => pair.Value)
+            .Take(2)
+            .Select(pair => pair.Value)
+            .Aggregate((a, b) => a * b);
+    }
+
+    private Dictionary<int, long> Play(Dictionary<int, Monkey> monkeys, int rounds, Func<long, long> stressOperation)
+    {
+        
         Dictionary<int, long> monkeyValues = new();
-
+        
         for (int i = 0; i < rounds; i++)
         {
-            foreach (var monkey in _monkeysPart1.Select(monkeyPair => monkeyPair.Value))
+            foreach (Monkey monkey in monkeys.Select(monkeyPair => monkeyPair.Value))
             {
                 while (monkey.Items.Count > 0)
                 {
                     long item = monkey.Items.Dequeue();
                     monkeyValues[monkey.Id] = monkeyValues.GetValueOrDefault(monkey.Id) + 1;
                     
-                    long worryLevel = monkey.CalculateWorryLevel(item) / 3;
-                    if (worryLevel % monkey.TestDivisor == 0)
-                        _monkeysPart1[monkey.TestTrueMonkey].Items.Enqueue(worryLevel);
-                    else _monkeysPart1[monkey.TestFalseMonkey].Items.Enqueue(worryLevel);
+                    item = monkey.CalculateWorryLevel(item);
+                    item = stressOperation(item);
+
+                    if (item % monkey.TestDivisor == 0) monkeys[monkey.TestTrueMonkey].Items.Enqueue(item);
+                    else monkeys[monkey.TestFalseMonkey].Items.Enqueue(item);
                 }
             }
         }
 
-        long monkeyBusiness = monkeyValues.OrderByDescending(pair => pair.Value).Take(2).Select(pair => pair.Value)
-            .Aggregate((a, b) => a * b);
-        return new ValueTask<string>(monkeyBusiness.ToString());
+        return monkeyValues;
+
     }
-
-    public override ValueTask<string> Solve_2()
-    {
-        int rounds = 10_000;
-
-        Dictionary<int, long> monkeyValues = new();
-        var factor = _monkeysPart2.Aggregate(1, (c, m) => c * m.Value.TestDivisor);
-
-        for (int i = 0; i < rounds; i++)
-        {
-            foreach (Monkey monkey in _monkeysPart2.Select(monkeyPair => monkeyPair.Value))
-            {
-                while (monkey.Items.Count > 0)
-                {
-                    long item = monkey.Items.Dequeue();
-                    monkeyValues[monkey.Id] = monkeyValues.GetValueOrDefault(monkey.Id) + 1;
-
-                    item = monkey.CalculateWorryLevel(item) % factor;
-                    if (item % monkey.TestDivisor == 0) _monkeysPart2[monkey.TestTrueMonkey].Items.Enqueue(item);
-                    else _monkeysPart2[monkey.TestFalseMonkey].Items.Enqueue(item);
-                }
-            }
-        }
-
-        long monkeyBusiness = monkeyValues.OrderByDescending(pair => pair.Value).Take(2).Select(pair => pair.Value)
-            .Aggregate((a, b) => a * b);
-        return new ValueTask<string>(monkeyBusiness.ToString());
-    }
+    
 }
