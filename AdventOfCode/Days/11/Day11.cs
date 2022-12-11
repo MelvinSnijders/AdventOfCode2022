@@ -12,10 +12,13 @@ public sealed class Day11 : BaseDay
         string[] unparsedMonkeys = File.ReadAllText(InputFilePath)
             .Split("\n\n");
 
-        _monkeysPart1 = unparsedMonkeys.Select(ParseMonkey)
-            .ToDictionary(keySelector: m => m.Id, elementSelector: m => m);
+        _monkeysPart1 = ParseInput(unparsedMonkeys);
+        _monkeysPart2 = ParseInput(unparsedMonkeys);
+    }
 
-        _monkeysPart2 = unparsedMonkeys.Select(ParseMonkey)
+    private Dictionary<int, Monkey> ParseInput(string[] unparsed)
+    {
+        return unparsed.Select(ParseMonkey)
             .ToDictionary(keySelector: m => m.Id, elementSelector: m => m);
     }
 
@@ -54,7 +57,7 @@ public sealed class Day11 : BaseDay
             .Aggregate((a, b) => a * b);
     }
 
-    private Dictionary<int, long> Play(Dictionary<int, Monkey> monkeys, int rounds, Func<long, long> stressOperation)
+    private Dictionary<int, long> Play(IReadOnlyDictionary<int, Monkey> monkeys, int rounds, Func<long, long> stressOperation)
     {
         
         Dictionary<int, long> monkeyValues = new();

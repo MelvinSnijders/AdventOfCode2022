@@ -4,7 +4,7 @@ public class Monkey
 {
     public int Id { get; }
     public Queue<long> Items { get; }
-    public string Operation { get; }
+    private string Operation { get; }
     public int TestDivisor { get; }
     public int TestTrueMonkey { get; }
     public int TestFalseMonkey { get; }
