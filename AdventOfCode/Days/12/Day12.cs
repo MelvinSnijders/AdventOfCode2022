@@ -4,92 +4,57 @@ namespace AdventOfCode.Days._12;
 
 public sealed class Day12 : BaseDay
 {
+    private char[][] _unparsed;
     private Dictionary<(int, int), Vertex> _vertices = new();
 
     public Day12()
     {
         string unparsedGraph = File.ReadAllText(InputFilePath);
-        char[][] unparsed = unparsedGraph.Split("\n").Select(line => line.ToCharArray()).ToArray();
-        ParseGraph(unparsed);
+        _unparsed = unparsedGraph.Split("\n").Select(line => line.ToCharArray()).ToArray();
+        ParseGraph();
     }
 
-    private void ParseGraph(char[][] unparsed)
+    private void ParseGraph()
     {
-        for (int y = 0; y < unparsed.Length; y++)
+        for (int y = 0; y < _unparsed.Length; y++)
         {
-            for (int x = 0; x < unparsed[y].Length; x++)
+            for (int x = 0; x < _unparsed[y].Length; x++)
             {
-                char c = unparsed[y][x];
+                char c = _unparsed[y][x];
                 Vertex vertex = _vertices.GetValueOrDefault((y, x), new Vertex(c));
                 _vertices[(y, x)] = vertex;
                 
-                // check left char
-                if (x > 0)
-                {
-                    char tChar = unparsed[y][x - 1];
-                    if (Math.Abs(tChar - c) <= 1 || (tChar < c && tChar != 'E' && tChar != 'z') || (tChar == 'E' && c == 'z') || (c == 'S' && tChar == 'a'))
-                    {
-                     
-                        Vertex targetVertex = _vertices.GetValueOrDefault((y, x - 1), new Vertex(tChar));
-                        _vertices[(y, x - 1)] = targetVertex;
-                        Edge edge = new Edge(targetVertex);
-                        vertex.Adjacent.AddLast(edge);
-                    }
-                }
-                
-                // check right char
-                if (x < unparsed[y].Length - 1)
-                {
-                    char tChar = unparsed[y][x + 1];
-                    if (Math.Abs(tChar - c) <= 1 || (tChar < c && tChar != 'E' && tChar != 'z') || (tChar == 'E' && c == 'z') || (c == 'S' && tChar == 'a'))
-                    {
-                        Vertex targetVertex = _vertices.GetValueOrDefault((y, x + 1), new Vertex(tChar));
-                        _vertices[(y, x + 1)] = targetVertex;
-                        Edge edge = new Edge(targetVertex);
-                        vertex.Adjacent.AddLast(edge);
-                    }
-                }
-                
-                // check top char
-                if (y > 0)
-                {
-                    char tChar = unparsed[y - 1][x];
-                    if (Math.Abs(tChar - c) <= 1  || (tChar < c && tChar != 'E' && tChar != 'z') || (tChar == 'E' && c == 'z') || (c == 'S' && tChar == 'a'))
-                    {
-                        Vertex targetVertex = _vertices.GetValueOrDefault((y - 1, x), new Vertex(tChar));
-                        _vertices[(y - 1, x)] = targetVertex;
-                        Edge edge = new Edge(targetVertex);
-                        vertex.Adjacent.AddLast(edge);
-                    }
-                }
-                
-                // check bottom char
-                if (y < unparsed.Length - 1)
-                {
-                    char tChar = unparsed[y + 1][x];
-                    if (Math.Abs(tChar - c) <= 1 || (tChar < c && tChar != 'E' && tChar != 'z') || (tChar == 'E' && c == 'z') || (c == 'S' && tChar == 'a'))
-                    {
-                        Vertex targetVertex = _vertices.GetValueOrDefault((y + 1, x), new Vertex(tChar));
-                        _vertices[(y + 1, x)] = targetVertex;
-                        Edge edge = new Edge(targetVertex);
-                        vertex.Adjacent.AddLast(edge);
-                    }
-                }
-                
+                if (x > 0) CheckAdjacent(vertex, y, x - 1);
+                if (x < _unparsed[y].Length - 1) CheckAdjacent(vertex, y, x + 1);
+                if (y > 0) CheckAdjacent(vertex, y - 1, x);
+                if (y < _unparsed.Length - 1) CheckAdjacent(vertex, y + 1, x);
+
             }
             
         }
 
-      
+    }
+
+    private void CheckAdjacent(Vertex current, int y, int x)
+    {
+        char c = current.Name;
+        char tChar = _unparsed[y][x];
+        if (Math.Abs(tChar - c) > 1 && (tChar >= c || tChar is 'E' or 'z') && (tChar != 'E' || c != 'z') &&
+            (c != 'S' || tChar != 'a')) return;
         
+        Vertex targetVertex = _vertices.GetValueOrDefault((y, x), new Vertex(tChar));
+        _vertices[(y, x)] = targetVertex;
+        Edge edge = new Edge(targetVertex);
+        current.Adjacent.AddLast(edge);
     }
     
     public override ValueTask<string> Solve_1()
     {
-        Vertex start = _vertices.First((pair) => pair.Value.Name == 'S').Value;
+        Vertex start = _vertices.First(pair => pair.Value.Name == 'S').Value;
         Search(start);
-
-        return new ValueTask<string>(_vertices.First((pair) => pair.Value.Name == 'E').Value.Distance.ToString());
+        
+        int answer = _vertices.First(pair => pair.Value.Name == 'E').Value.Distance;
+        return new ValueTask<string>(answer.ToString());
     }
 
     // Solution can be improved by searching from the end to all A's instead of performing a lot of BFS's.
@@ -109,7 +74,7 @@ public sealed class Day12 : BaseDay
     {
         _vertices.Values.ToList().ForEach(v => v.Reset());
 
-        Queue<Vertex> queue = new Queue<Vertex>();
+        Queue<Vertex> queue = new();
         queue.Enqueue(start);
         start.Distance = 0;
 
@@ -117,15 +82,11 @@ public sealed class Day12 : BaseDay
         {
             Vertex vertex = queue.Dequeue();
 
-            foreach (Edge edge in vertex.Adjacent)
+            foreach (var w in vertex.Adjacent.Select(edge => edge.Destination).Where(w => w.Distance == int.MaxValue))
             {
-                Vertex w = edge.Destination;
-                if (w.Distance == int.MaxValue)
-                {
-                    w.Distance = vertex.Distance + 1;
-                    w.Previous = vertex;
-                    queue.Enqueue(w);
-                }
+                w.Distance = vertex.Distance + 1;
+                w.Previous = vertex;
+                queue.Enqueue(w);
             }
         }
     }
