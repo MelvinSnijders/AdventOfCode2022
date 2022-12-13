@@ -1,3 +1,3 @@
 using AoCHelper;
 
-Solver.SolveLast();
+Solver.SolveAll();

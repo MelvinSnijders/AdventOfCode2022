@@ -4,8 +4,8 @@ namespace AdventOfCode.Days._12;
 
 public sealed class Day12 : BaseDay
 {
-    private char[][] _unparsed;
-    private Dictionary<(int, int), Vertex> _vertices = new();
+    private readonly char[][] _unparsed;
+    private readonly Dictionary<(int, int), Vertex> _vertices = new();
 
     public Day12()
     {
@@ -56,27 +56,28 @@ public sealed class Day12 : BaseDay
         int answer = _vertices.First(pair => pair.Value.Name == 'E').Value.Distance;
         return new ValueTask<string>(answer.ToString());
     }
-
-    // Solution can be improved by searching from the end to all A's instead of performing a lot of BFS's.
+    
     public override ValueTask<string> Solve_2()
     {
-        List<int> distances = new();
-        foreach (Vertex vertex in _vertices.Where(pair => pair.Value.Name == 'a').Select(pair => pair.Value))
-        {
-            Search(vertex);
-            distances.Add(_vertices.First(pair => pair.Value.Name == 'E').Value.Distance);
-        }
-
-        return new ValueTask<string>(distances.Min().ToString());
+        Vertex[] vertices = _vertices.Where(pair => pair.Value.Name == 'a')
+            .Select(pair => pair.Value)
+            .ToArray();
+        Search(vertices);
+        
+        int answer = _vertices.First(pair => pair.Value.Name == 'E').Value.Distance;
+        return new ValueTask<string>(answer.ToString());
     }
 
-    private void Search(Vertex start)
+    private void Search(params Vertex[] startVertices)
     {
         _vertices.Values.ToList().ForEach(v => v.Reset());
 
         Queue<Vertex> queue = new();
-        queue.Enqueue(start);
-        start.Distance = 0;
+        foreach (Vertex vertex in startVertices)
+        {
+            queue.Enqueue(vertex);
+            vertex.Distance = 0;
+        }
 
         while (queue.Count > 0)
         {
